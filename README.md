@@ -1,14 +1,7 @@
-# DeepLab v3
+This is not origin project, origin is in this link:
+https://github.com/leimao/DeepLab_v3
 
-Lei Mao, Shengjie Lin
-
-University of Chicago
-
-Toyota Technological Institute at Chicago
-
-## Introduction
-
-DeepLab is a series of image semantic segmentation models, whose latest version, i.e. v3+, proves to be the state-of-art. Its major contribution is the use of atrous spatial pyramid pooling (ASPP) operation at the end of the encoder. While the model works extremely well, its open source code is hard to read (at least from my personal perspective). Here we re-implemented DeepLab v3, the earlier version of v3+ (which only additionally employs the decoder architecture), in a much simpler and more understandable way.
+I just test a little, 
 
 ## Dependencies
 
