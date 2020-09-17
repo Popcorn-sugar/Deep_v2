@@ -40,7 +40,7 @@ from __future__ import print_function
 import collections
 import tensorflow as tf
 
-slim = tf.contrib.slim
+import tf_slim as slim
 
 
 class Block(collections.namedtuple('Block', ['scope', 'unit_fn', 'args'])):
@@ -116,8 +116,8 @@ def conv2d_same(inputs, num_outputs, kernel_size, stride, rate=1, scope=None):
     pad_total = kernel_size_effective - 1
     pad_beg = pad_total // 2
     pad_end = pad_total - pad_beg
-    inputs = tf.pad(inputs,
-                    [[0, 0], [pad_beg, pad_end], [pad_beg, pad_end], [0, 0]])
+    inputs = tf.pad(tensor=inputs,
+                    paddings=[[0, 0], [pad_beg, pad_end], [pad_beg, pad_end], [0, 0]])
     return slim.conv2d(inputs, num_outputs, kernel_size, stride=stride,
                        rate=rate, padding='VALID', scope=scope)
 
@@ -179,7 +179,7 @@ def stack_blocks_dense(net, blocks, output_stride=None,
   rate = 1
 
   for block in blocks:
-    with tf.variable_scope(block.scope, 'block', [net]) as sc:
+    with tf.compat.v1.variable_scope(block.scope, 'block', [net]) as sc:
       block_stride = 1
       for i, unit in enumerate(block.args):
         if store_non_strided_activations and i == len(block.args) - 1:
@@ -187,7 +187,7 @@ def stack_blocks_dense(net, blocks, output_stride=None,
           block_stride = unit.get('stride', 1)
           unit = dict(unit, stride=1)
 
-        with tf.variable_scope('unit_%d' % (i + 1), values=[net]):
+        with tf.compat.v1.variable_scope('unit_%d' % (i + 1), values=[net]):
           # If we have reached the target output_stride, then we need to employ
           # atrous convolution with stride=1 and multiply the atrous rate by the
           # current unit's stride for use in subsequent layers.
@@ -225,7 +225,7 @@ def resnet_arg_scope(weight_decay=0.0001,
                      batch_norm_scale=True,
                      activation_fn=tf.nn.relu,
                      use_batch_norm=True,
-                     batch_norm_updates_collections=tf.GraphKeys.UPDATE_OPS):
+                     batch_norm_updates_collections=tf.compat.v1.GraphKeys.UPDATE_OPS):
   """Defines the default ResNet arg scope.
 
   TODO(gpapan): The batch-normalization related default values above are
@@ -259,8 +259,8 @@ def resnet_arg_scope(weight_decay=0.0001,
 
   with slim.arg_scope(
       [slim.conv2d],
-      weights_regularizer=slim.l2_regularizer(weight_decay),
-      weights_initializer=slim.variance_scaling_initializer(),
+      weights_regularizer=tf.keras.regularizers.l2(0.5),
+      weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=2.0),
       activation_fn=activation_fn,
       normalizer_fn=slim.batch_norm if use_batch_norm else None,
       normalizer_params=batch_norm_params):

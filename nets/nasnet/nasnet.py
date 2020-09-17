@@ -135,9 +135,9 @@ def nasnet_cifar_arg_scope(weight_decay=5e-4,
       'scale': True,
       'fused': True,
   }
-  weights_regularizer = tf.contrib.layers.l2_regularizer(weight_decay)
-  weights_initializer = tf.contrib.layers.variance_scaling_initializer(
-      mode='FAN_OUT')
+  weights_regularizer = tf.keras.regularizers.l2(0.5 * (weight_decay))
+  weights_initializer = tf.compat.v1.keras.initializers.VarianceScaling(
+      scale=2.0, mode=('FAN_OUT').lower())
   with arg_scope([slim.fully_connected, slim.conv2d, slim.separable_conv2d],
                  weights_regularizer=weights_regularizer,
                  weights_initializer=weights_initializer):
@@ -171,9 +171,9 @@ def nasnet_mobile_arg_scope(weight_decay=4e-5,
       'scale': True,
       'fused': True,
   }
-  weights_regularizer = tf.contrib.layers.l2_regularizer(weight_decay)
-  weights_initializer = tf.contrib.layers.variance_scaling_initializer(
-      mode='FAN_OUT')
+  weights_regularizer = tf.keras.regularizers.l2(0.5 * (weight_decay))
+  weights_initializer = tf.compat.v1.keras.initializers.VarianceScaling(
+      scale=2.0, mode=('FAN_OUT').lower())
   with arg_scope([slim.fully_connected, slim.conv2d, slim.separable_conv2d],
                  weights_regularizer=weights_regularizer,
                  weights_initializer=weights_initializer):
@@ -207,9 +207,9 @@ def nasnet_large_arg_scope(weight_decay=5e-5,
       'scale': True,
       'fused': True,
   }
-  weights_regularizer = tf.contrib.layers.l2_regularizer(weight_decay)
-  weights_initializer = tf.contrib.layers.variance_scaling_initializer(
-      mode='FAN_OUT')
+  weights_regularizer = tf.keras.regularizers.l2(0.5 * (weight_decay))
+  weights_initializer = tf.compat.v1.keras.initializers.VarianceScaling(
+      scale=2.0, mode=('FAN_OUT').lower())
   with arg_scope([slim.fully_connected, slim.conv2d, slim.separable_conv2d],
                  weights_regularizer=weights_regularizer,
                  weights_initializer=weights_initializer):
@@ -223,9 +223,9 @@ def nasnet_large_arg_scope(weight_decay=5e-5,
 
 def _build_aux_head(net, end_points, num_classes, hparams, scope):
   """Auxiliary head used for all models across all datasets."""
-  with tf.variable_scope(scope):
+  with tf.compat.v1.variable_scope(scope):
     aux_logits = tf.identity(net)
-    with tf.variable_scope('aux_logits'):
+    with tf.compat.v1.variable_scope('aux_logits'):
       aux_logits = slim.avg_pool2d(
           aux_logits, [5, 5], stride=3, padding='VALID')
       aux_logits = slim.conv2d(aux_logits, 128, [1, 1], scope='proj')
@@ -294,11 +294,11 @@ def build_nasnet_cifar(images, num_classes,
   _update_hparams(hparams, is_training)
 
   if tf.test.is_gpu_available() and hparams.data_format == 'NHWC':
-    tf.logging.info('A GPU is available on the machine, consider using NCHW '
+    tf.compat.v1.logging.info('A GPU is available on the machine, consider using NCHW '
                     'data format for increased speed on GPU.')
 
   if hparams.data_format == 'NCHW':
-    images = tf.transpose(images, [0, 3, 1, 2])
+    images = tf.transpose(a=images, perm=[0, 3, 1, 2])
 
   # Calculate the total number of cells in the network
   # Add 2 for the reduction cells
@@ -344,11 +344,11 @@ def build_nasnet_mobile(images, num_classes,
   _update_hparams(hparams, is_training)
 
   if tf.test.is_gpu_available() and hparams.data_format == 'NHWC':
-    tf.logging.info('A GPU is available on the machine, consider using NCHW '
+    tf.compat.v1.logging.info('A GPU is available on the machine, consider using NCHW '
                     'data format for increased speed on GPU.')
 
   if hparams.data_format == 'NCHW':
-    images = tf.transpose(images, [0, 3, 1, 2])
+    images = tf.transpose(a=images, perm=[0, 3, 1, 2])
 
   # Calculate the total number of cells in the network
   # Add 2 for the reduction cells
@@ -397,11 +397,11 @@ def build_nasnet_large(images, num_classes,
   _update_hparams(hparams, is_training)
 
   if tf.test.is_gpu_available() and hparams.data_format == 'NHWC':
-    tf.logging.info('A GPU is available on the machine, consider using NCHW '
+    tf.compat.v1.logging.info('A GPU is available on the machine, consider using NCHW '
                     'data format for increased speed on GPU.')
 
   if hparams.data_format == 'NCHW':
-    images = tf.transpose(images, [0, 3, 1, 2])
+    images = tf.transpose(a=images, perm=[0, 3, 1, 2])
 
   # Calculate the total number of cells in the network
   # Add 2 for the reduction cells
@@ -519,7 +519,7 @@ def _build_nasnet_base(images,
     cell_outputs.append(net)
 
   # Final softmax layer
-  with tf.variable_scope('final_layer'):
+  with tf.compat.v1.variable_scope('final_layer'):
     net = tf.nn.relu(net)
     net = nasnet_utils.global_avg_pool(net)
     if add_and_check_endpoint('global_pool', net) or not num_classes:
