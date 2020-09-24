@@ -6,7 +6,7 @@ I just test a little when update to tensorflow above 2.0
 ## Dependencies
 
 * Python 3.7.8
-* TensorFlow 2.3
+* TensorFlow 2.1.0
 * Tqdm 4.26.0
 * Numpy 1.14
 * OpenCV 3.4.3
