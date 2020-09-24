@@ -1,3 +1,5 @@
+import time
+start_time = time.time()
 
 import argparse
 import os
@@ -5,6 +7,7 @@ import os
 import numpy as np
 
 import tensorflow as tf
+#import gpu_limit
 from model import DeepLab
 from tqdm import trange
 from utils import (DataPreprocessor, Dataset, Iterator,
@@ -12,16 +15,20 @@ from utils import (DataPreprocessor, Dataset, Iterator,
                    mean_intersection_over_union, multiscale_single_validate,
                    save_load_means, subtract_channel_means, validation_demo,
                    validation_single_demo)
-
-
+                   
+timer = time.time()
+print('###########################################################################################################')
+print(timer - start_time)
+print('###########################################################################################################')
 def train(network_backbone, pre_trained_model=None, trainset_filename='data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt', valset_filename='data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt', images_dir='data/datasets/VOCdevkit/VOC2012/JPEGImages/', labels_dir='data/datasets/VOCdevkit/VOC2012/SegmentationClass/', trainset_augmented_filename='data/datasets/SBD/train_noval.txt', images_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/img/', labels_augmented_dir='data/datasets/SBD/benchmark_RELEASE/dataset/cls/', model_dir=None, log_dir='data/logs/deeplab/'):
-
+    print("Init")
+    print('###########################################################################################################')
     if not model_dir:
         model_dir = 'data/models/deeplab/{}_voc2012/'.format(network_backbone)
     num_classes = 21
     ignore_label = 255
-    num_epochs = 1000
-    minibatch_size = 8  # Unable to do minibatch_size = 12 :(
+    num_epochs = 100
+    minibatch_size = 1  # Unable to do minibatch_size = 12 :(
     random_seed = 0
     learning_rate = 1e-5
     weight_decay = 5e-4
@@ -35,7 +42,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         os.makedirs(model_dir)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
-
+    print("Take data")
+    print('###########################################################################################################')
     # Prepare datasets
     train_dataset = Dataset(dataset_filename=trainset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.jpg', label_extension='.png')
     valid_dataset = Dataset(dataset_filename=valset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.jpg', label_extension='.png')
@@ -60,7 +68,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
     model = DeepLab(network_backbone, num_classes=num_classes, ignore_label=ignore_label, batch_norm_momentum=batch_norm_decay, pre_trained_model=pre_trained_model, log_dir=log_dir)
 
     best_mIoU = 0
-
+    print("Start training")
+    print('###########################################################################################################')
     for i in range(num_epochs):
 
         print('Epoch number: {}'.format(i))

@@ -6,8 +6,9 @@ import tensorflow as tf
 from feature_extractor import MobileNet, Resnet, Vgg16
 from modules import atrous_spatial_pyramid_pooling
 tf.compat.v1.disable_eager_execution()
-import torch  
+
 import tf_slim as slim
+
 class DeepLab(object):
 
     def __init__(self, base_architecture, training=True, num_classes=21, ignore_label=255, batch_norm_momentum=0.9997, pre_trained_model=None, log_dir='data/logs/deeplab/'):
@@ -25,7 +26,7 @@ class DeepLab(object):
         self.target_width = tf.compat.v1.placeholder(tf.int32, None, name='target_image_width')
 
         self.weight_decay = tf.compat.v1.placeholder(float, None, name='weight_decay')
-        self.regularizer = tf.keras.regularizers.l2(l2=0.5 )
+        self.regularizer = tf.keras.regularizers.l2(l=0.5 )
         self.batch_norm_momentum = batch_norm_momentum
 
         self.feature_map = self.backbone_initializer(base_architecture)

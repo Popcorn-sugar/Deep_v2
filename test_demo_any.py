@@ -10,12 +10,14 @@ import numpy as np
 
 from model import DeepLab
 from utils import ( save_load_means, subtract_channel_means, single_demo, read_image)
+import gpu_limit
+
 
 if __name__ == '__main__':
 
-    demo_dir = 'data/demos/deeplab/resnet_101_voc2012/'
+    demo_dir = 'data/demos/deeplab/hello/'
     models_dir = 'data/models/deeplab/resnet_101_voc2012/'
-    model_filename = 'resnet_101_0.6959.ckpt'
+    model_filename = 'resnet_101_0.0040.ckpt'
     
     
     channel_means = save_load_means(means_filename='channel_means.npz',image_filenames=None, recalculate=False)
