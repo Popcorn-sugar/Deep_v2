@@ -1,12 +1,12 @@
 This is not origin project, origin is in this link:
 https://github.com/leimao/DeepLab_v3
 
-I just test a little, 
+I just test a little when update to tensorflow above 2.0
 
 ## Dependencies
 
-* Python 3.5
-* TensorFlow 1.8
+* Python 3.7.8
+* TensorFlow 2.3
 * Tqdm 4.26.0
 * Numpy 1.14
 * OpenCV 3.4.3
